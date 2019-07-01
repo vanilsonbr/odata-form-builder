@@ -157,24 +157,26 @@ export class ODataFormBuilder<TSource, TDestination> {
      * @param queryOptions the odata query options
      */
     toQuery(myObject: TDestination, queryOptions: ODataQueryNoFilter = { $count: true, $skip: null, $orderBy: null, $top: 20 }): ODataQuery {
-        var filters: string[] = [];
+        let filters: string[] = [];
         this.fragments.forEach(fragment => {
-            if(fragment.type !== FragmentType.Filter)
+            if(fragment.type !== FragmentType.Filter) {
                 return;
+            }
 
             // if it is a function (Expression), It will apply the Expression to the object and get the value.
             //    It's like doing myObject.destinationProperty
             // if it is an literal, I will just assign the value
             let filterValue = typeof fragment.expression.destinationProperty !== "function" ?
                 fragment.expression.destinationProperty :
-                (fragment.expression.destinationProperty as Expr<TDestination>)(myObject);
+                fragment.expression.destinationProperty(myObject);
 
             // if the user defined a transformation pipeline to the value, it will get executed here
             //    it's like doing, for instance: myObject.destinationProperty = myObject.destinationProperty.trim()
             // if after this point, filterValue returns null and ignoreFilterWhenValueNull is true,
             //    it is inferred that the user don't want to include this filter to the odata query  
-            if (fragment.expression.valuePipeline)
+            if (fragment.expression.valuePipeline) {
                 filterValue = fragment.expression.valuePipeline(filterValue, myObject);
+            }
 
             // // check here if the value is some of the following: "string", "number", "boolean", "null"
             // // if not: throw error
@@ -183,14 +185,16 @@ export class ODataFormBuilder<TSource, TDestination> {
             //     throw new Error("odata-form-builder: unrecognized filter value type: " + typeOfFilterValue);
 
             // if the filterValue is null, it will not be added to the filter
-            if(filterValue === null)
+            if(filterValue === null) {
                 return;
+            }
 
             // put quotation marks if the filter is a string and the let it setted to true
             //   In some cases, like when the value is a date stringified, the quotation marks may not be insertted,
             //      as odata will throw an error ( date gt yyyy-mm-dd:T00:00:00.000Z //no quot. marks here)
-            if(typeof filterValue == "string" && fragment.expression.putQuotationMarksOnValue)
+            if(typeof filterValue === "string" && fragment.expression.putQuotationMarksOnValue) {
                 filterValue = `'${filterValue}'`;
+            }
 
             // relace the placeholders with the actual values (e.g "$1 <operation> $2" => "name eq 'foo'")
             let filter = fragment.expression.expressionBody.replace("$1", fragment.expression.sourceProperty).replace("$2", filterValue.toString());
