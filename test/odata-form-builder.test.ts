@@ -164,7 +164,7 @@ describe("Odata builder tests", () => {
         let queryString = formBuilder.toQueryString(destination, defaultOptions());
         // Second Test (with validation pipeline)
         
-        let formBuilder2 = new ODataFormBuilder<Source, Destination>().lowerThan(x => x.numberType, x => x.destinationNumberType, value => value + 1);
+        let formBuilder2 = new ODataFormBuilder<Source, Destination>().lowerThan(x => x.numberType, x => x.destinationNumberType, value => value + 1, false);
         let query2 = formBuilder2.toQuery(destination2, defaultOptions());
         let queryString2 = formBuilder2.toQueryString(destination2, defaultOptions());
 
@@ -196,7 +196,7 @@ describe("Odata builder tests", () => {
         let queryString = formBuilder.toQueryString(destination, defaultOptions());
         // Second Test (with validation pipeline)
         
-        let formBuilder2 = new ODataFormBuilder<Source, Destination>().lowerThanOrEqual(x => x.numberType, x => x.destinationNumberType, value => value + 1);
+        let formBuilder2 = new ODataFormBuilder<Source, Destination>().lowerThanOrEqual(x => x.numberType, x => x.destinationNumberType, value => value + 1, false);
         let query2 = formBuilder2.toQuery(destination2, defaultOptions());
         let queryString2 = formBuilder2.toQueryString(destination2, defaultOptions());
 
@@ -228,7 +228,7 @@ describe("Odata builder tests", () => {
         let queryString = formBuilder.toQueryString(destination, defaultOptions());
         // Second Test (with validation pipeline)
         
-        let formBuilder2 = new ODataFormBuilder<Source, Destination>().greaterThan(x => x.numberType, x => x.destinationNumberType, value => value + 1);
+        let formBuilder2 = new ODataFormBuilder<Source, Destination>().greaterThan(x => x.numberType, x => x.destinationNumberType, value => value + 1, false);
         let query2 = formBuilder2.toQuery(destination2, defaultOptions());
         let queryString2 = formBuilder2.toQueryString(destination2, defaultOptions());
 
@@ -260,7 +260,7 @@ describe("Odata builder tests", () => {
         let queryString = formBuilder.toQueryString(destination, defaultOptions());
         // Second Test (with validation pipeline)
         
-        let formBuilder2 = new ODataFormBuilder<Source, Destination>().greaterThanOrEqual(x => x.numberType, x => x.destinationNumberType, value => value + 1);
+        let formBuilder2 = new ODataFormBuilder<Source, Destination>().greaterThanOrEqual(x => x.numberType, x => x.destinationNumberType, value => value + 1, false);
         let query2 = formBuilder2.toQuery(destination2, defaultOptions());
         let queryString2 = formBuilder2.toQueryString(destination2, defaultOptions());
 
@@ -282,7 +282,7 @@ describe("Odata builder tests", () => {
 
         //Test
         let formBuilder = new ODataFormBuilder<Source, Destination>();
-        formBuilder.greaterThanOrEqual(x => x.numberType, x => x.destinationNumberType, (destinationNumberType) => destinationNumberType + 1 );
+        formBuilder.greaterThanOrEqual(x => x.numberType, x => x.destinationNumberType, (destinationNumberType) => destinationNumberType + 1, false);
         let query = formBuilder.toQuery(destination, defaultOptions());
         let queryString = formBuilder.toQueryString(destination, defaultOptions());
 
@@ -291,7 +291,7 @@ describe("Odata builder tests", () => {
         expect(query.$filter).toEqual(expectedQueryResult.$filter);
     });
 
-    it("should build a query with a filter contains and compare with a literal number value and return correctly", () => {
+    it("should build a query with a filter equals and compare with a literal number value and return correctly", () => {
         //Arrange
         const expectedResult = "$count=true$filter=numberType eq 124$top=20";
         const expectedQueryResult = defaultQuery();
@@ -386,25 +386,6 @@ describe("Odata builder tests", () => {
         expect(query.$filter).toEqual(expectedQueryResult.$filter);
     });
 
-    // it("should build a query with a filter contains and compare with a literal bigint value and return correctly", () => {
-    //     //Arrange
-    //     const expectedResult = "$count=true$filter=bigIntType eq 4294967295$top=20";
-    //     const expectedQueryResult = defaultQuery();
-    //     expectedQueryResult.$filter = "bigIntType eq 4294967295";
-    //     let destination = new Destination();
-    //     const literal : bigint = BigInt(4294967295);
-
-    //     //Test
-    //     let formBuilder = new ODataFormBuilder<Source, Destination>();  
-    //     formBuilder.equals(x => x.bigIntType, literal);
-    //     let query = formBuilder.toQuery(destination, defaultOptions());
-    //     let queryString = formBuilder.toQueryString(destination, defaultOptions());
-
-    //     //Assert
-    //     expect(queryString).toEqual(expectedResult);
-    //     expect(query.$filter).toEqual(expectedQueryResult.$filter);
-    // });
-
     it("should not build the filter when a pipeline returns a null value", () => {
         //Arrange
         const expectedResult = "$count=true$top=20";
@@ -423,20 +404,4 @@ describe("Odata builder tests", () => {
         expect(queryString).toEqual(expectedResult);
         expect(query.$filter).toEqual(expectedQueryResult.$filter);
     });
-
-    // it("should not build a query with a property returning a function filter and throw an error", () => {
-    //     //Arrange
-    //     let destination = new Destination();
-    //         //the user could hack the filter function passing a property with type 'any'. It is checked in the internals 
-    //     destination.destinationAnyType = () => "2"; 
-
-    //     //Test
-    //     let formBuilder = new ODataFormBuilder<Source, Destination>()
-    //         .contains(x => x.anyType, x => x.destinationAnyType);
-
-    //     //Assert
-    //     expect(() => {
-    //         formBuilder.toQuery(destination);
-    //     }).toThrowError("odata-form-builder: unrecognized filter value type: function");
-    // });
 })
