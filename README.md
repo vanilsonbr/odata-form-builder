@@ -43,13 +43,14 @@ You will create a Builder to be able to apply the filters.
 You can add filters by building upon the variable
 ```typescript
 let odataFormBuilder = new ODataFormBuilder<Source, MyForm>();
-odataFormBuilder.contains(source => source.id, form => form.id);
+odataFormBuilder.filters(f => f.contains(source => source.id, form => form.id));
 ```
 or
 ```typescript
 let odataFormBuilder = new ODataFormBuilder<Source, MyForm>()
-    .contains(source => source.id, form => form.id)
-    .equals(source => source.name, form => form.name)
+    .filters(f => f
+        .contains(source => source.id, form => form.id)
+        .equals(source => source.name, form => form.name));
 ```
 When you are ready to make the request to your server, you can simply call `toQuery()` or `toQueryString()`, passing the current state of the object
 ```typescript
@@ -63,8 +64,9 @@ let query: ODataQuery = odataFormBuilder.toQuery(formCurrentState);
 You can define transformations to the form value by setting a pipeline:
 ```typescript
 //...
-odataFormBuilder.greaterThan(s => s.count, d => d.count,
-    (destinationCountValue, form) => form.hasSomething? destinationCountValue : destinationCountValue + 1);
+odataFormBuilder.filters(f => f
+    .greaterThan(s => s.count, d => d.count,
+        (destinationCountValue, form) => form.hasSomething? destinationCountValue : destinationCountValue + 1));
 
 odataFormBuilder.toQuery(formCurrentState);
 ```
@@ -74,8 +76,9 @@ if the pipeline returns `null`, the filter won't be added to the final query
 currentStateForm.address = "San Pedro Street, 256";
 correntStateForm.userSelectedAddress = false;
 
-odataFormBuilder.equals(s => s.address, d => d.address,
-    (address, form) => form.userSelectedAddress? address : null);
+odataFormBuilder.filers(f => f
+    .equals(s => s.address, d => d.address,
+        (address, form) => form.userSelectedAddress? address : null));
 
 odataFormBuilder.toQuery(formCurrentState); // won't add the term "address eq 'San Pedro Street, 256'" to the filter
 ```
@@ -87,7 +90,8 @@ It can be used, for instance, when a Date comparison has to be made.
 currentStateForm.date = "2019-06-28";
 let dateToStringPipeline = (date: string) => `${date}T00:00:00.000Z`; 
 
-odataFormBuilder.greaterThanOrEqual(s => s.initialDate, d => d.initialDate, dateToStringPipeline, false); // do not put quotation marks
+odataFormBuilder.filters(f => f
+    .greaterThanOrEqual(s => s.initialDate, d => d.initialDate, dateToStringPipeline, false /*do not put quotation marks*/));
 odataFormBuilder.toQueryString(formCurrentState); // $count=true$filter=date ge 2019-06-28T00:00:00.000Z$top=20
 ```
 

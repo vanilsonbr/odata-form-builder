@@ -1,18 +1,18 @@
 {
   "name": "odata-form-builder",
-  "version": "0.0.0",
-  "description": "",
-  "keywords": [],
+  "version": "0.0.1",
+  "description": "Typescript odata form builder helper to make your query creation easier!",
+  "keywords": ["typescript", "odata", "form", "angular", "builder", "form builder", "odata builder"],
   "main": "dist/odata-form-builder.umd.js",
   "module": "dist/odata-form-builder.es5.js",
   "typings": "dist/types/odata-form-builder.d.ts",
   "files": [
     "dist"
   ],
-  "author": " <>",
+  "author": "Vanilson Nogueira de Azevedo",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/vanilsonbr/odata-form-builder"
   },
   "license": "MIT",
   "engines": {
